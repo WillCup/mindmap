@@ -149,7 +149,7 @@ export default class MindMap extends Vue {
   mouse = { x0: 0, y0: 0, x1: 0, y1: 0 }
   contextMenuTarget!: Mdata | Mdata[]
   contextMenuItems = [
-    { title: '删除节点', name: 'delete', disabled: false },
+    { title: '占位节点', name: 'delete', disabled: true },
     { title: '折叠节点', name: 'collapse', disabled: false },
     { title: '展开节点', name: 'expand', disabled: false },
   ]
@@ -444,7 +444,7 @@ export default class MindMap extends Vue {
         switch (keyName) {
           case 'Tab': {
             d3.event.preventDefault()
-            const nd = this.add(im, { name: '' })
+            const nd = this.add(im, { name: '', bgcolor: '' })
             if (nd) {
               this.editNew(nd, seleDepth + 1, pNode)
             }
@@ -453,12 +453,12 @@ export default class MindMap extends Vue {
           case 'Enter': {
             d3.event.preventDefault()
             if (pNode === this.$refs.content) { // 根节点enter时，等效tab
-              const nd = this.add(im, { name: '' })
+              const nd = this.add(im, { name: '', bgcolor: '' })
               if (nd) {
                 this.editNew(nd, seleDepth + 1, pNode)
               }
             } else {
-              const nd = this.insert(im, { name: '' }, 1)
+              const nd = this.insert(im, { name: '', bgcolor: '' }, 1)
               if (nd) {
                 this.editNew(nd, seleDepth, pNode)
               }
@@ -630,7 +630,7 @@ export default class MindMap extends Vue {
     if ((n[i] as SVGElement).style.opacity === '1') {
       d3.event.stopPropagation()
       const d: FlexNode = d3.select(n[i].parentNode as Element).data()[0] as FlexNode
-      const newD = this.add(d.data, { name: '' })
+      const newD = this.add(d.data, { name: '', bgcolor: '' })
       this.mouseLeave(d, i, n)
       if (newD) {
         this.editNew(newD, d.depth + 1, n[i].parentNode as Element)
@@ -892,6 +892,15 @@ export default class MindMap extends Vue {
 
     const foreign = gNode.append('foreignObject').attr('x', foreignX).attr('y', foreignY)
     const foreignDiv = foreign.append('xhtml:div').attr('contenteditable', false).text((d: FlexNode) => d.data.name)
+    foreignDiv.style('background-color', (d: FlexNode) => d.data.bgcolor)
+    // foreignDiv.style('padding', 20)
+    foreignDiv.style('color', (d: FlexNode) => {
+      console.log('sfsdf', d.data)
+      if (d.data.bgcolor && d.data.bgcolor === '#f16152') {
+        return 'white'
+      }
+      return 'black'
+    })
     foreignDiv.on('blur', updateNodeName).on('keydown', divKeyDown).on('mousedown', fdivMouseDown)
     foreignDiv.each((d, i, n) => {
       const observer = new ResizeObserver((l) => {

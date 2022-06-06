@@ -42,7 +42,7 @@ function initSize(d: Mdata) { // 初始化size
 
 function _getSource(d: Mdata) { // 返回源数据
   const { children, _children } = d
-  const nd: Data = { name: d.name }
+  const nd: Data = { name: d.name, bgcolor: d.bgcolor }
   nd.left = d.left
   if (children) {
     const { length } = children
@@ -132,7 +132,7 @@ class ImData {
 
   getSource(id = '0') {
     const d = this.find(id)
-    return d ? _getSource(d) : { name: '' }
+    return d ? _getSource(d) : { name: '', bgcolor: '' }
   }
 
   resize(id = '0') { // 更新size
